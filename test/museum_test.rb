@@ -54,4 +54,45 @@ class MuseumTest < Minitest::Test
     assert_equal expected, dmns.recommend_exhibits(bob)
     assert_equal [imax], dmns.recommend_exhibits(sally)
   end
+
+
+  def test_it_can_starts_with_no_patrons
+    dmns.add_exhibit(gems_and_minerals)
+    dmns.add_exhibit(dead_sea_scrolls)
+    dmns.add_exhibit(imax)
+
+    assert_equal [], dmns.patrons
+  end
+
+  def test_it_can_admit_patrons
+    dmns.add_exhibit(gems_and_minerals)
+    dmns.add_exhibit(dead_sea_scrolls)
+    dmns.add_exhibit(imax)
+    bob.add_interest("Dead Sea Scrolls")
+    bob.add_interest("Gems and Minerals")
+    sally.add_interest("Dead Sea Scrolls")
+    dmns.admit(bob)
+    dmns.admit(sally)
+
+    assert_equal [bob, sally], dmns.patrons
+  end
+
+  def test_it_can_give_patrons_by_exhibit_interests
+    dmns.add_exhibit(gems_and_minerals)
+    dmns.add_exhibit(dead_sea_scrolls)
+    dmns.add_exhibit(imax)
+    bob.add_interest("Dead Sea Scrolls")
+    bob.add_interest("Gems and Minerals")
+    sally.add_interest("Dead Sea Scrolls")
+    dmns.admit(bob)
+    dmns.admit(sally)
+
+    expected = {
+      gems_and_minerals => [bob],
+      dead_sea_scrolls => [bob, sally],
+      imax => []
+    }
+
+    assert_equal expected, dmns.patrons_by_exhibit_interest
+  end
 end
