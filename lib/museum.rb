@@ -1,3 +1,5 @@
+require 'pry'
+
 class Museum
   attr_reader :name, :exhibits, :patrons
 
@@ -21,8 +23,26 @@ class Museum
     recomended
   end
 
+  def attend_events(patron)
+    exhibits_to_go_to = recommend_exhibits(patron)
+
+    exhibit_attended = exhibits_to_go_to.max_by do |exhibit|
+      exhibit.cost
+    end
+    p exhibit_attended
+    until patron.spending_money == 0 || exhibit_attended.cost > patron.spending_money
+      patron.spending_money -= exhibit_attended.cost
+      exhibits_to_go_to.delete(exhibit_attended)
+    end
+
+  end
+
   def admit(patron)
     @patrons << patron
+    #to work on attend_events without breaking everything
+    if patron.name == "TJ" || patron.name == 'Bob2'
+      attend_events(patron)
+    end
   end
 
   def patrons_by_exhibit_interest
